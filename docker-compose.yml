@@ -1,0 +1,19 @@
+# Gateway del CRM/Ventas hacia Expert Connect, sobre Cloud SQL Postgres (VM de GCP).
+# Para sumarlo al compose de Expert Connect migrado ver documentation.md
+# ("Despliegue en la VM de GCP"). Los secretos llegan por env_file, nunca acá.
+services:
+  crm-expert-connect-gateway:
+    build: .
+    container_name: crm-expert-connect-gateway
+    env_file:
+      # DATABASE_URL (o DB_POSTGRES_*), OPENAI_API_KEY y CRM_EXPERT_CONNECT_GATEWAY_TOKEN.
+      - ./private/gateway.env
+    environment:
+      CRM_DB_SCHEMA: vps4_agronorte_prod
+      CRM_EXPERT_CONNECT_TEAM_ID: 67ae4464-701a-4d53-bc9a-f074c28ebe83
+      CRM_EXPERT_CONNECT_AREA_ID: Ventas de Maquinaria
+      CRM_EXPERT_CONNECT_TAG_ID: f72c7805-43dc-40b5-b8ed-73a95e047045
+      OPENAI_SUMMARY_MODEL: ${OPENAI_SUMMARY_MODEL:-gpt-4.1-mini}
+    ports:
+      - "127.0.0.1:28012:28012"
+    restart: unless-stopped
